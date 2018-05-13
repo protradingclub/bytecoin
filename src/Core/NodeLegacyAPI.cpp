@@ -73,8 +73,8 @@ size_t slow_memmem(void *start_buff, size_t buflen, void *pat, size_t patlen) {
 }  // anonymous namespace
 
 bool Node::on_getblocktemplate(http::Client *who, http::RequestData &&raw_request, json_rpc::Request &&raw_js_request,
-    api::bytecoind::GetBlockTemplate::Request &&req, api::bytecoind::GetBlockTemplate::Response &res) {
-	api::bytecoind::GetStatus::Request sta;
+    api::bytecoinmobiled::GetBlockTemplate::Request &&req, api::bytecoinmobiled::GetBlockTemplate::Response &res) {
+	api::bytecoinmobiled::GetStatus::Request sta;
 	sta.top_block_hash           = req.top_block_hash;
 	sta.transaction_pool_version = req.transaction_pool_version;
 	m_log(logging::INFO) << "Node received getblocktemplate REQ transaction_pool_version="
@@ -101,8 +101,8 @@ bool Node::on_getblocktemplate(http::Client *who, http::RequestData &&raw_reques
 	return true;
 }
 
-void Node::getblocktemplate(const api::bytecoind::GetBlockTemplate::Request &req,
-    api::bytecoind::GetBlockTemplate::Response &res) {
+void Node::getblocktemplate(const api::bytecoinmobiled::GetBlockTemplate::Request &req,
+    api::bytecoinmobiled::GetBlockTemplate::Response &res) {
 	if (req.reserve_size > TX_EXTRA_NONCE_MAX_COUNT) {
 		throw json_rpc::Error{CORE_RPC_ERROR_CODE_TOO_BIG_RESERVE_SIZE, "To big reserved size, maximum 255"};
 	}
@@ -157,13 +157,13 @@ void Node::getblocktemplate(const api::bytecoind::GetBlockTemplate::Request &req
 }
 
 bool Node::on_get_currency_id(http::Client *, http::RequestData &&, json_rpc::Request &&,
-    api::bytecoind::GetCurrencyId::Request && /*req*/, api::bytecoind::GetCurrencyId::Response &res) {
+    api::bytecoinmobiled::GetCurrencyId::Request && /*req*/, api::bytecoinmobiled::GetCurrencyId::Response &res) {
 	res.currency_id_blob = m_block_chain.get_genesis_bid();
 	return true;
 }
 
 bool Node::on_submitblock(http::Client *, http::RequestData &&, json_rpc::Request &&,
-    api::bytecoind::SubmitBlock::Request &&req, api::bytecoind::SubmitBlock::Response &res) {
+    api::bytecoinmobiled::SubmitBlock::Request &&req, api::bytecoinmobiled::SubmitBlock::Response &res) {
 	BinaryArray blockblob = req.blocktemplate_blob;
 
 	BlockTemplate block_template;
@@ -185,12 +185,12 @@ bool Node::on_submitblock(http::Client *, http::RequestData &&, json_rpc::Reques
 }
 
 bool Node::on_submitblock_legacy(http::Client *who, http::RequestData &&rd, json_rpc::Request &&jr,
-    api::bytecoind::SubmitBlockLegacy::Request &&req, api::bytecoind::SubmitBlockLegacy::Response &res) {
+    api::bytecoinmobiled::SubmitBlockLegacy::Request &&req, api::bytecoinmobiled::SubmitBlockLegacy::Response &res) {
 	if (req.size() != 1) {
 		throw json_rpc::Error{CORE_RPC_ERROR_CODE_WRONG_PARAM, "Wrong param"};
 	}
 
-	api::bytecoind::SubmitBlock::Request other_req;
+	api::bytecoinmobiled::SubmitBlock::Request other_req;
 	if (!common::from_hex(req[0], other_req.blocktemplate_blob)) {
 		throw json_rpc::Error{CORE_RPC_ERROR_CODE_WRONG_BLOCKBLOB, "Wrong block blob 1"};
 	}
@@ -198,8 +198,8 @@ bool Node::on_submitblock_legacy(http::Client *who, http::RequestData &&rd, json
 }
 
 bool Node::on_get_last_block_header(http::Client *, http::RequestData &&, json_rpc::Request &&,
-    api::bytecoind::GetLastBlockHeaderLegacy::Request &&,
-    api::bytecoind::GetLastBlockHeaderLegacy::Response &response) {
+    api::bytecoinmobiled::GetLastBlockHeaderLegacy::Request &&,
+    api::bytecoinmobiled::GetLastBlockHeaderLegacy::Response &response) {
 	static_cast<api::BlockHeader &>(response.block_header) = m_block_chain.get_tip();
 	response.block_header.orphan_status                    = false;
 	response.block_header.depth =
@@ -209,8 +209,8 @@ bool Node::on_get_last_block_header(http::Client *, http::RequestData &&, json_r
 }
 
 bool Node::on_get_block_header_by_hash(http::Client *, http::RequestData &&, json_rpc::Request &&,
-    api::bytecoind::GetBlockHeaderByHashLegacy::Request &&request,
-    api::bytecoind::GetBlockHeaderByHashLegacy::Response &response) {
+    api::bytecoinmobiled::GetBlockHeaderByHashLegacy::Request &&request,
+    api::bytecoinmobiled::GetBlockHeaderByHashLegacy::Response &response) {
 	if (!m_block_chain.read_header(request.hash, response.block_header))
 		throw json_rpc::Error{CORE_RPC_ERROR_CODE_INTERNAL_ERROR,
 		    "Internal error: can't get block by hash. Hash = " + common::pod_to_hex(request.hash) + '.'};
@@ -224,8 +224,8 @@ bool Node::on_get_block_header_by_hash(http::Client *, http::RequestData &&, jso
 }
 
 bool Node::on_get_block_header_by_height(http::Client *, http::RequestData &&, json_rpc::Request &&,
-    api::bytecoind::GetBlockHeaderByHeightLegacy::Request &&request,
-    api::bytecoind::GetBlockHeaderByHeightLegacy::Response &response) {
+    api::bytecoinmobiled::GetBlockHeaderByHeightLegacy::Request &&request,
+    api::bytecoinmobiled::GetBlockHeaderByHeightLegacy::Response &response) {
 	Hash block_hash;
 	if (!m_block_chain.read_chain(request.height - 1, block_hash)) {  // This call counts blocks from 1
 		throw json_rpc::Error{CORE_RPC_ERROR_CODE_TOO_BIG_HEIGHT,

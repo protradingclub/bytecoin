@@ -11,7 +11,7 @@
 ### v3.0.2
 
 - __API change:__ In `create_transaction`, `spend_address` parameter of type `string` is changed to `spend_addresses` of type `[]string`. This change is likely to affect only Web wallets developers.
-- __API change:__ In `sync_mem_pool`, `added_binary_transactions` of type `string` is changed to `added_bc_transactions` of type `bytecoin::TransactionPrefix`. This change breaks compatilibilty between new and old `walletd` and `bytecoind`, so make sure they are both the same version.
+- __API change:__ In `sync_mem_pool`, `added_binary_transactions` of type `string` is changed to `added_bc_transactions` of type `bytecoin::TransactionPrefix`. This change breaks compatilibilty between new and old `walletd` and `bytecoinmobiled`, so make sure they are both the same version.
 
 ### v3.0.1
 
@@ -22,15 +22,15 @@
 
 ### v3.0.0
 
-- Added HTTPS support between walletd and bytecoind.
+- Added HTTPS support between walletd and bytecoinmobiled.
 - Added generating and checking send proofs.
 - Added SQLite database support as an alternative to LMDB.
-- Added several legacy bytecoind RPC API methods for miners.
+- Added several legacy bytecoinmobiled RPC API methods for miners.
 
 ### v3.0.0-beta-20180219
 
 - Reworked creating transactions with 100,000+ unspent outputs to make it much faster.
-- Fixed rare `bytecoind` crashes while downloading blockchain.
+- Fixed rare `bytecoinmobiled` crashes while downloading blockchain.
 - Fixed stuck dowloading from misbehaving nodes.
 - Added early support of JSON-RPC API basic authentification that prevents CSRF attacks.
 - Added (experimental) support of 32-bit platforms.

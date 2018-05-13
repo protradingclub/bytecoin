@@ -37,19 +37,19 @@ Options:
   --walletd-bind-address=<ip:port>     Interface and port for walletd RPC [default: 127.0.0.1:8070].
   --data-folder=<full-path>            Folder for wallet cache, blockchain, logs and peer DB [default: )" platform_DEFAULT_DATA_FOLDER_PATH_PREFIX
     R"(bytecoin].
-  --bytecoind-remote-address=<ip:port> Connect to remote bytecoind and suppress running built-in bytecoind.
-  --bytecoind-authorization=<usr:pass> HTTP authorization for RCP.
+  --bytecoinmobiled-remote-address=<ip:port> Connect to remote bytecoinmobiled and suppress running built-in bytecoinmobiled.
+  --bytecoinmobiled-authorization=<usr:pass> HTTP authorization for RCP.
 
-Options for built-in bytecoind (run when no --bytecoind-remote-address specified):
+Options for built-in bytecoinmobiled (run when no --bytecoinmobiled-remote-address specified):
   --allow-local-ip                     Allow local ip add to peer list, mostly in debug purposes.
   --p2p-bind-address=<ip:port>         Interface and port for P2P network protocol [default: 0.0.0.0:8080].
   --p2p-external-port=<port>           External port for P2P network protocol, if port forwarding used with NAT [default: 8080].
-  --bytecoind-bind-address=<ip:port>   Interface and port for bytecoind RPC [default: 127.0.0.1:8081].
+  --bytecoinmobiled-bind-address=<ip:port>   Interface and port for bytecoinmobiled RPC [default: 127.0.0.1:8081].
   --seed-node-address=<ip:port>        Specify list (one or more) of nodes to start connecting to.
   --priority-node-address=<ip:port>    Specify list (one or more) of nodes to connect to and attempt to keep the connection open.
   --exclusive-node-address=<ip:port>   Specify list (one or more) of nodes to connect to only. All other nodes including seed nodes will be ignored.)";
 
-static const bool separate_thread_for_bytecoind = true;
+static const bool separate_thread_for_bytecoinmobiled = true;
 
 int main(int argc, const char *argv[]) try {
 	common::console::UnicodeConsoleSetup console_setup;
@@ -81,7 +81,7 @@ int main(int argc, const char *argv[]) try {
 	if (cmd.should_quit(USAGE, bytecoin::app_version()))
 		return api::WALLETD_WRONG_ARGS;
 	logging::LoggerManager logManagerNode;
-	logManagerNode.configure_default(config.get_data_folder("logs"), "bytecoind-");
+	logManagerNode.configure_default(config.get_data_folder("logs"), "bytecoinmobiled-");
 
 	if (wallet_file.empty()) {
 		std::cout << "--wallet-file=<file> argument is mandatory" << std::endl;
@@ -162,11 +162,11 @@ int main(int argc, const char *argv[]) try {
 	}
 	std::unique_ptr<platform::ExclusiveLock> blockchain_lock;
 	try {
-		if (!config.bytecoind_remote_port)
-			blockchain_lock = std::make_unique<platform::ExclusiveLock>(coinFolder, "bytecoind.lock");
+		if (!config.bytecoinmobiled_remote_port)
+			blockchain_lock = std::make_unique<platform::ExclusiveLock>(coinFolder, "bytecoinmobiled.lock");
 	} catch (const platform::ExclusiveLock::FailedToLock &ex) {
-		std::cout << "Bytecoind already running - " << ex.what() << std::endl;
-		return api::BYTECOIND_ALREADY_RUNNING;
+		std::cout << "Bytecoinmobiled already running - " << ex.what() << std::endl;
+		return api::BYTECOINMOBILED_ALREADY_RUNNING;
 	}
 	try {
 		walletcache_lock = std::make_unique<platform::ExclusiveLock>(
@@ -209,11 +209,11 @@ int main(int argc, const char *argv[]) try {
 	std::unique_ptr<Node> node;
 
 	std::promise<void> prm;
-	std::thread bytecoind_thread;
-	if (!config.bytecoind_remote_port) {
+	std::thread bytecoinmobiled_thread;
+	if (!config.bytecoinmobiled_remote_port) {
 		try {
-			if (separate_thread_for_bytecoind) {
-				bytecoind_thread = std::thread([&prm, &logManagerNode, &config, &currency] {
+			if (separate_thread_for_bytecoinmobiled) {
+				bytecoinmobiled_thread = std::thread([&prm, &logManagerNode, &config, &currency] {
 					boost::asio::io_service io;
 					platform::EventLoop separate_run_loop(io);
 
@@ -242,9 +242,9 @@ int main(int argc, const char *argv[]) try {
 			}
 		} catch (const boost::system::system_error &ex) {
 			std::cout << ex.what() << std::endl;
-			if (bytecoind_thread.joinable())
-				bytecoind_thread.join();  // otherwise terminate will be called in ~thread
-			return api::BYTECOIND_BIND_PORT_IN_USE;
+			if (bytecoinmobiled_thread.joinable())
+				bytecoinmobiled_thread.join();  // otherwise terminate will be called in ~thread
+			return api::BYTECOINMOBILED_BIND_PORT_IN_USE;
 		}
 	}
 

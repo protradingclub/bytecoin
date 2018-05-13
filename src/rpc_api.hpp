@@ -133,10 +133,10 @@ namespace bytecoin {
 namespace api {
 
 enum return_code {
-	BYTECOIND_DATABASE_ERROR    = 101,  // We hope we are out of disk space, otherwise blockchain DB is corrupted.
-	BYTECOIND_ALREADY_RUNNING   = 102,
+	BYTECOINMOBILED_DATABASE_ERROR    = 101,  // We hope we are out of disk space, otherwise blockchain DB is corrupted.
+	BYTECOINMOBILED_ALREADY_RUNNING   = 102,
 	WALLETD_BIND_PORT_IN_USE    = 103,
-	BYTECOIND_BIND_PORT_IN_USE  = 104,
+	BYTECOINMOBILED_BIND_PORT_IN_USE  = 104,
 	WALLET_FILE_READ_ERROR      = 205,
 	WALLET_FILE_UNKNOWN_VERSION = 206,
 	WALLET_FILE_DECRYPT_ERROR   = 207,
@@ -166,7 +166,7 @@ struct GetStatus {
 		// You get longpoll (no immediate reply) until any parameter changes.
 		// You can just send previous response as a next request if you are interested in all changes visible to API.
 		std::string
-		    lower_level_error;  // Problems on lower levels (like bytecoind errors in walletd status). Empty - no errors
+		    lower_level_error;  // Problems on lower levels (like bytecoinmobiled errors in walletd status). Empty - no errors
 
 		bool operator==(const Request &other) const {
 			return lower_level_error == other.lower_level_error && top_block_hash == other.top_block_hash &&
@@ -357,11 +357,11 @@ struct GetTransaction {
 }
 }
 
-// These messages encoded in JSON can be sent via http url /json_rpc3 to bytecoind rpc address:port
+// These messages encoded in JSON can be sent via http url /json_rpc3 to bytecoinmobiled rpc address:port
 // or to binMethod() url encoded in unspecified binary format
 namespace bytecoin {
 namespace api {
-namespace bytecoind {
+namespace bytecoinmobiled {
 
 inline std::string url() { return "/json_rpc"; }
 
@@ -376,7 +376,7 @@ struct GetStatus {
 };
 
 // Signature of this method will stabilize to the end of beta
-struct SyncBlocks {  // Used by walletd, block explorer, etc to sync to bytecoind
+struct SyncBlocks {  // Used by walletd, block explorer, etc to sync to bytecoinmobiled
 	static std::string method() { return "sync_blocks"; }
 	static std::string bin_method() { return "/sync_blocks.bin"; }
 
@@ -386,7 +386,7 @@ struct SyncBlocks {  // Used by walletd, block explorer, etc to sync to bytecoin
 		Timestamp first_block_timestamp = 0;
 		uint32_t max_count              = MAX_COUNT / 10;
 	};
-	struct SyncBlock {  // Signatures are checked by bytecoind so usually they are of no interest
+	struct SyncBlock {  // Signatures are checked by bytecoinmobiled so usually they are of no interest
 		api::BlockHeader header;
 		bytecoin::BlockTemplate bc_header;
 		// the only method returning actual BlockHeader from blockchain, not api::BlockHeader
@@ -556,27 +556,27 @@ void ser_members(bytecoin::api::walletd::CreateSendProof::Response &v, ISeria &s
 void ser_members(bytecoin::api::walletd::GetTransaction::Request &v, ISeria &s);
 void ser_members(bytecoin::api::walletd::GetTransaction::Response &v, ISeria &s);
 
-void ser_members(bytecoin::api::bytecoind::GetStatus::Request &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::GetStatus::Response &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::SyncBlocks::Request &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::SyncBlocks::SyncBlock &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::SyncBlocks::Response &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::SyncMemPool::Request &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::SyncMemPool::Response &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::GetRandomOutputs::Request &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::GetRandomOutputs::Response &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::SendTransaction::Request &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::SendTransaction::Response &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::CheckSendProof::Request &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::CheckSendProof::Response &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::GetBlockTemplate::Request &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::GetBlockTemplate::Response &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::GetCurrencyId::Response &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::SubmitBlock::Request &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::SubmitBlock::Response &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::BlockHeaderLegacy &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::GetLastBlockHeaderLegacy::Response &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::GetBlockHeaderByHashLegacy::Request &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::GetBlockHeaderByHeightLegacy::Request &v, ISeria &s);
+void ser_members(bytecoin::api::bytecoinmobiled::GetStatus::Request &v, ISeria &s);
+void ser_members(bytecoin::api::bytecoinmobiled::GetStatus::Response &v, ISeria &s);
+void ser_members(bytecoin::api::bytecoinmobiled::SyncBlocks::Request &v, ISeria &s);
+void ser_members(bytecoin::api::bytecoinmobiled::SyncBlocks::SyncBlock &v, ISeria &s);
+void ser_members(bytecoin::api::bytecoinmobiled::SyncBlocks::Response &v, ISeria &s);
+void ser_members(bytecoin::api::bytecoinmobiled::SyncMemPool::Request &v, ISeria &s);
+void ser_members(bytecoin::api::bytecoinmobiled::SyncMemPool::Response &v, ISeria &s);
+void ser_members(bytecoin::api::bytecoinmobiled::GetRandomOutputs::Request &v, ISeria &s);
+void ser_members(bytecoin::api::bytecoinmobiled::GetRandomOutputs::Response &v, ISeria &s);
+void ser_members(bytecoin::api::bytecoinmobiled::SendTransaction::Request &v, ISeria &s);
+void ser_members(bytecoin::api::bytecoinmobiled::SendTransaction::Response &v, ISeria &s);
+void ser_members(bytecoin::api::bytecoinmobiled::CheckSendProof::Request &v, ISeria &s);
+void ser_members(bytecoin::api::bytecoinmobiled::CheckSendProof::Response &v, ISeria &s);
+void ser_members(bytecoin::api::bytecoinmobiled::GetBlockTemplate::Request &v, ISeria &s);
+void ser_members(bytecoin::api::bytecoinmobiled::GetBlockTemplate::Response &v, ISeria &s);
+void ser_members(bytecoin::api::bytecoinmobiled::GetCurrencyId::Response &v, ISeria &s);
+void ser_members(bytecoin::api::bytecoinmobiled::SubmitBlock::Request &v, ISeria &s);
+void ser_members(bytecoin::api::bytecoinmobiled::SubmitBlock::Response &v, ISeria &s);
+void ser_members(bytecoin::api::bytecoinmobiled::BlockHeaderLegacy &v, ISeria &s);
+void ser_members(bytecoin::api::bytecoinmobiled::GetLastBlockHeaderLegacy::Response &v, ISeria &s);
+void ser_members(bytecoin::api::bytecoinmobiled::GetBlockHeaderByHashLegacy::Request &v, ISeria &s);
+void ser_members(bytecoin::api::bytecoinmobiled::GetBlockHeaderByHeightLegacy::Request &v, ISeria &s);
 
 }  // namespace seria

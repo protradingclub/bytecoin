@@ -15,12 +15,12 @@
 using namespace bytecoin;
 
 static const char USAGE[] =
-    R"(bytecoind )" bytecoin_VERSION_STRING R"(.
+    R"(bytecoinmobiled )" bytecoin_VERSION_STRING R"(.
 
 Usage:
-  bytecoind [options]
-  bytecoind --help | -h
-  bytecoind --version | -v
+  bytecoinmobiled [options]
+  bytecoinmobiled --help | -h
+  bytecoinmobiled --version | -v
 
 Options:
   --export-blocks=<directory>          Export blockchain into specified directory as blocks.bin and blockindexes.bin, then exit. This overwrites existing files.
@@ -28,7 +28,7 @@ Options:
   --testnet                            Configure for testnet.
   --p2p-bind-address=<ip:port>         Interface and port for P2P network protocol [default: 0.0.0.0:8080].
   --p2p-external-port=<port>           External port for P2P network protocol, if port forwarding used with NAT [default: 8080].
-  --bytecoind-bind-address=<ip:port>   Interface and port for bytecoind RPC [default: 127.0.0.1:8081].
+  --bytecoinmobiled-bind-address=<ip:port>   Interface and port for bytecoinmobiled RPC [default: 127.0.0.1:8081].
   --seed-node-address=<ip:port>        Specify list (one or more) of nodes to start connecting to.
   --priority-node-address=<ip:port>    Specify list (one or more) of nodes to connect to and attempt to keep the connection open.
   --exclusive-node-address=<ip:port>   Specify list (one or more) of nodes to connect to only. All other nodes including seed nodes will be ignored.
@@ -39,7 +39,7 @@ Options:
     R"(  --ssl-certificate-pem-file=<file>    Full path to file containing both server SSL certificate and private key in PEM format.
   --ssl-certificate-password=<pass>    DEPRECATED. Will read password from stdin if not specified.)"
 #endif
-    R"(  --bytecoind-authorization=<usr:pass> HTTP authorization for RPC.)";
+    R"(  --bytecoinmobiled-authorization=<usr:pass> HTTP authorization for RPC.)";
 
 int main(int argc, const char *argv[]) try {
 	common::console::UnicodeConsoleSetup console_setup;
@@ -66,10 +66,10 @@ int main(int argc, const char *argv[]) try {
 
 	const std::string coinFolder = config.get_data_folder();
 
-	platform::ExclusiveLock coin_lock(coinFolder, "bytecoind.lock");
+	platform::ExclusiveLock coin_lock(coinFolder, "bytecoinmobiled.lock");
 
 	logging::LoggerManager logManager;
-	logManager.configure_default(config.get_data_folder("logs"), "bytecoind-");
+	logManager.configure_default(config.get_data_folder("logs"), "bytecoinmobiled-");
 
 	BlockChainState block_chain(logManager, config, currency);
 //	block_chain.test_undo_everything();
@@ -87,7 +87,7 @@ int main(int argc, const char *argv[]) try {
 
 	auto idea_ms =
 	    std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - idea_start);
-	std::cout << "bytecoind started seconds=" << double(idea_ms.count()) / 1000 << std::endl;
+	std::cout << "bytecoinmobiled started seconds=" << double(idea_ms.count()) / 1000 << std::endl;
 	while (!io.stopped()) {
 		if (node.on_idle())  // Using it to load blockchain
 			io.poll();
@@ -96,8 +96,8 @@ int main(int argc, const char *argv[]) try {
 	}
 	return 0;
 } catch (const platform::ExclusiveLock::FailedToLock &ex) {
-	std::cout << "Bytecoind already running - " << ex.what() << std::endl;
-	return api::BYTECOIND_ALREADY_RUNNING;
+	std::cout << "Bytecoinmobiled already running - " << ex.what() << std::endl;
+	return api::BYTECOINMOBILED_ALREADY_RUNNING;
 } catch (const std::exception &ex) {  // On Windows what() is not printed if thrown from main
 	std::cout << "Exception in main() - " << ex.what() << std::endl;
 	throw;

@@ -100,7 +100,7 @@ BlockChain::BlockChain(const Hash &genesis_bid, const std::string &coin_folder)
 	m_db.get("$version", version);
 	if (version != version_current) {
 		std::cout << "Data format changed, old version=" << version << " current version=" << version_current
-		          << ", deleting bytecoind cache..." << std::endl;
+		          << ", deleting bytecoinmobiled cache..." << std::endl;
 		std::set<Hash> main_chain_bids;
 		for (Height ha = 1;; ha += 1) {
 			BinaryArray ba;
@@ -206,7 +206,7 @@ BroadcastAction BlockChain::add_block(const PreparedBlock &pb, api::BlockHeader 
 		std::cout << "Exception while reorganizing blockchain, probably out of "
 		             "disk space ex.what="
 		          << ex.what() << std::endl;
-		std::exit(api::BYTECOIND_DATABASE_ERROR);
+		std::exit(api::BYTECOINMOBILED_DATABASE_ERROR);
 	}
 	if (get_tip_height() % 50000 == 0)
 		db_commit();

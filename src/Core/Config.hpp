@@ -37,11 +37,11 @@ public:
 
 	std::string ssl_certificate_pem_file;
 	boost::optional<std::string> ssl_certificate_password;
-	std::string bytecoind_authorization;
-	uint16_t bytecoind_bind_port;
-	std::string bytecoind_bind_ip;
-	uint16_t bytecoind_remote_port;
-	std::string bytecoind_remote_ip;
+	std::string bytecoinmobiled_authorization;
+	uint16_t bytecoinmobiled_bind_port;
+	std::string bytecoinmobiled_bind_ip;
+	uint16_t bytecoinmobiled_remote_port;
+	std::string bytecoinmobiled_remote_ip;
 
 	std::string walletd_authorization;
 	uint16_t walletd_bind_port;

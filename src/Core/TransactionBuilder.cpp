@@ -186,7 +186,7 @@ void UnspentSelector::reset(Unspents &&unspents) {
 
 void UnspentSelector::add_mixed_inputs(const SecretKey &view_secret_key,
     const std::unordered_map<PublicKey, WalletRecord> &wallet_records, TransactionBuilder &builder, uint32_t anonymity,
-    api::bytecoind::GetRandomOutputs::Response &&ra_response) {
+    api::bytecoinmobiled::GetRandomOutputs::Response &&ra_response) {
 	for (auto uu : m_used_unspents) {
 		std::vector<api::Output> mix_outputs;
 		auto &our_ra_outputs = ra_response.outputs[uu.amount];

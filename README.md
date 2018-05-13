@@ -70,7 +70,7 @@ $bcndev/bytecoin/build> time make -j4
 
 Check built binaries by running them from `../bin` folder
 ```
-$bcndev/bytecoin/build> ../bin/bytecoind -v
+$bcndev/bytecoin/build> ../bin/bytecoinmobiled -v
 ```
 
 ### Building with specific options
@@ -132,7 +132,7 @@ $bcndev/bytecoin/build> time make -j4
 
 Check built binaries by running them from `../bin` folder:
 ```
-$bcndev/bytecoin/build> ../bin/bytecoind -v
+$bcndev/bytecoin/build> ../bin/bytecoinmobiled -v
 ```
 
 ### Building with specific options
@@ -246,7 +246,7 @@ Therefore SQLite option is automatically selected by CMake on 32-bit platforms a
 
 We build official x86 32-bit version for Windows only, because there is zero demand for 32-bit version for Linux or Mac.
 
-Building source code for iOS, Android, Raspberry PI, etc is possible (we have experimental `bytecoind` and `walletd` running on ARM64 iPhone) but requires major skills on your part. __TBD__
+Building source code for iOS, Android, Raspberry PI, etc is possible (we have experimental `bytecoinmobiled` and `walletd` running on ARM64 iPhone) but requires major skills on your part. __TBD__
 
 ## Building on Big-Endian platforms
 

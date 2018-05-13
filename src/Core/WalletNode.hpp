@@ -37,8 +37,8 @@ public:
 	bool handle_create_send_proof3(http::Client *, http::RequestData &&, json_rpc::Request &&,
 	    api::walletd::CreateSendProof::Request &&, api::walletd::CreateSendProof::Response &);
 	bool handle_send_transaction3(http::Client *, http::RequestData &&, json_rpc::Request &&,
-	    api::bytecoind::SendTransaction::Request &&,
-	    api::bytecoind::SendTransaction::Response &);  // We lock spent outputs until next pool sync
+	    api::bytecoinmobiled::SendTransaction::Request &&,
+	    api::bytecoinmobiled::SendTransaction::Response &);  // We lock spent outputs until next pool sync
 	bool handle_get_transaction3(http::Client *, http::RequestData &&, json_rpc::Request &&,
 	    api::walletd::GetTransaction::Request &&, api::walletd::GetTransaction::Response &);
 

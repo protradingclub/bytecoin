@@ -60,7 +60,7 @@ class WalletPreparatorMulticore {
 	bool quit = false;
 
 	std::map<Height, PreparedWalletBlock> prepared_blocks;
-	api::bytecoind::SyncBlocks::Response work;
+	api::bytecoinmobiled::SyncBlocks::Response work;
 	int work_counter = 0;
 	SecretKey work_secret_key;
 	void thread_run();
@@ -69,7 +69,7 @@ public:
 	WalletPreparatorMulticore();
 	~WalletPreparatorMulticore();
 	void cancel_work();
-	void start_work(const api::bytecoind::SyncBlocks::Response &new_work, const SecretKey &view_secret_key);
+	void start_work(const api::bytecoinmobiled::SyncBlocks::Response &new_work, const SecretKey &view_secret_key);
 	PreparedWalletBlock get_ready_work(Height height);
 };
 
@@ -121,8 +121,8 @@ public:
 	const api::BlockHeader &get_tip() const { return m_tip; }
 
 	std::vector<Hash> get_sparse_chain() const;
-	bool sync_with_blockchain(api::bytecoind::SyncBlocks::Response &);   // We move from it
-	bool sync_with_blockchain(api::bytecoind::SyncMemPool::Response &);  // We move from it
+	bool sync_with_blockchain(api::bytecoinmobiled::SyncBlocks::Response &);   // We move from it
+	bool sync_with_blockchain(api::bytecoinmobiled::SyncMemPool::Response &);  // We move from it
 	void add_transient_transaction(const Hash &tid, const TransactionPrefix &tx);
 
 	bool parse_raw_transaction(api::Transaction &ptx, const TransactionPrefix &tx, Hash tid) const;

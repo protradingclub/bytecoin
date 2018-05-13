@@ -22,10 +22,10 @@ WalletSync::WalletSync(
     , m_config(config)
     , m_sync_error("CONNECTING")
     , m_status_timer(std::bind(&WalletSync::send_get_status, this))
-    , m_sync_agent(config.bytecoind_remote_ip,
-          config.bytecoind_remote_port ? config.bytecoind_remote_port : config.bytecoind_bind_port)
-    , m_commands_agent(config.bytecoind_remote_ip,
-          config.bytecoind_remote_port ? config.bytecoind_remote_port : config.bytecoind_bind_port)
+    , m_sync_agent(config.bytecoinmobiled_remote_ip,
+          config.bytecoinmobiled_remote_port ? config.bytecoinmobiled_remote_port : config.bytecoinmobiled_bind_port)
+    , m_commands_agent(config.bytecoinmobiled_remote_ip,
+          config.bytecoinmobiled_remote_port ? config.bytecoinmobiled_remote_port : config.bytecoinmobiled_bind_port)
     , m_wallet_state(wallet_state)
     , m_commit_timer(std::bind(&WalletSync::db_commit, this)) {
 	advance_sync();
@@ -38,18 +38,18 @@ void WalletSync::db_commit() {
 }
 
 void WalletSync::send_get_status() {
-	api::bytecoind::GetStatus::Request req;
+	api::bytecoinmobiled::GetStatus::Request req;
 	req.top_block_hash           = m_wallet_state.get_tip_bid();
 	req.transaction_pool_version = m_wallet_state.get_tx_pool_version();
 	req.outgoing_peer_count      = m_last_node_status.outgoing_peer_count;
 	req.incoming_peer_count      = m_last_node_status.incoming_peer_count;
 	req.lower_level_error        = m_last_node_status.lower_level_error;
 	json_rpc::Request json_send_raw_req;
-	json_send_raw_req.set_method(api::bytecoind::GetStatus::method());
+	json_send_raw_req.set_method(api::bytecoinmobiled::GetStatus::method());
 	json_send_raw_req.set_params(req);
 	http::RequestData req_header;
-	req_header.r.set_firstline("POST", api::bytecoind::url(), 1, 1);
-	req_header.r.basic_authorization = m_config.bytecoind_authorization;
+	req_header.r.set_firstline("POST", api::bytecoinmobiled::url(), 1, 1);
+	req_header.r.basic_authorization = m_config.bytecoinmobiled_authorization;
 	req_header.set_body(json_send_raw_req.get_body());
 
 	m_sync_request.reset(new http::Request(m_sync_agent, std::move(req_header),
@@ -59,7 +59,7 @@ void WalletSync::send_get_status() {
 			    advance_sync();
 			    return;
 		    }
-		    api::bytecoind::GetStatus::Response resp;
+		    api::bytecoinmobiled::GetStatus::Response resp;
 		    json_rpc::parse_response(response.body, resp);
 		    m_last_node_status = resp;
 		    m_sync_error       = std::string();
@@ -96,16 +96,16 @@ void WalletSync::advance_sync() {
 }
 
 void WalletSync::send_sync_pool() {
-	api::bytecoind::SyncMemPool::Request msg;
+	api::bytecoinmobiled::SyncMemPool::Request msg;
 	msg.known_hashes = m_wallet_state.get_tx_pool_hashes();
 	http::RequestData req_header;
-	req_header.r.set_firstline("POST", api::bytecoind::SyncMemPool::bin_method(), 1, 1);
-	req_header.r.basic_authorization = m_config.bytecoind_authorization;
+	req_header.r.set_firstline("POST", api::bytecoinmobiled::SyncMemPool::bin_method(), 1, 1);
+	req_header.r.basic_authorization = m_config.bytecoinmobiled_authorization;
 	req_header.set_body(seria::to_binary_str(msg));
 	m_sync_request = std::make_unique<http::Request>(m_sync_agent, std::move(req_header),
 	    [&](http::ResponseData &&response) {
 		    m_sync_request.reset();
-		    api::bytecoind::SyncMemPool::Response resp;
+		    api::bytecoinmobiled::SyncMemPool::Response resp;
 		    seria::from_binary(resp, response.body);
 		    m_last_node_status = resp.status;
 		    m_sync_error       = "WRONG_BLOCKCHAIN";
@@ -125,17 +125,17 @@ void WalletSync::send_sync_pool() {
 }
 
 void WalletSync::send_get_blocks() {
-	api::bytecoind::SyncBlocks::Request msg;
+	api::bytecoinmobiled::SyncBlocks::Request msg;
 	msg.sparse_chain          = m_wallet_state.get_sparse_chain();
 	msg.first_block_timestamp = m_wallet_state.get_wallet().get_oldest_timestamp();
 	http::RequestData req_header;
-	req_header.r.set_firstline("POST", api::bytecoind::SyncBlocks::bin_method(), 1, 1);
-	req_header.r.basic_authorization = m_config.bytecoind_authorization;
+	req_header.r.set_firstline("POST", api::bytecoinmobiled::SyncBlocks::bin_method(), 1, 1);
+	req_header.r.basic_authorization = m_config.bytecoinmobiled_authorization;
 	req_header.set_body(seria::to_binary_str(msg));
 	m_sync_request = std::make_unique<http::Request>(m_sync_agent, std::move(req_header),
 	    [&](http::ResponseData &&response) {
 		    m_sync_request.reset();
-		    api::bytecoind::SyncBlocks::Response resp;
+		    api::bytecoinmobiled::SyncBlocks::Response resp;
 		    seria::from_binary(resp, response.body);
 		    m_last_node_status = resp.status;
 		    m_sync_error       = "WRONG_BLOCKCHAIN";

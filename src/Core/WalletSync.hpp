@@ -15,7 +15,7 @@ class WalletSync {
 public:
 	explicit WalletSync(logging::ILogger &, const Config &, WalletState &, std::function<void()> state_changed_handler);
 
-	const api::bytecoind::GetStatus::Response &get_last_node_status() const { return m_last_node_status; }
+	const api::bytecoinmobiled::GetStatus::Response &get_last_node_status() const { return m_last_node_status; }
 	std::string get_sync_error() const { return m_sync_error; }
 
 protected:
@@ -23,7 +23,7 @@ protected:
 	logging::LoggerRef m_log;
 	const Config &m_config;
 
-	api::bytecoind::GetStatus::Response m_last_node_status;
+	api::bytecoinmobiled::GetStatus::Response m_last_node_status;
 	std::string m_sync_error;
 	platform::Timer m_status_timer;
 	http::Agent m_sync_agent;

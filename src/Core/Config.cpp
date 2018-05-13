@@ -32,10 +32,10 @@ Config::Config(common::CommandLine &cmd)
     , p2p_bind_port(P2P_DEFAULT_PORT)
     , p2p_external_port(P2P_DEFAULT_PORT)
     , p2p_bind_ip("0.0.0.0")
-    , bytecoind_bind_port(RPC_DEFAULT_PORT)
-    , bytecoind_bind_ip("127.0.0.1")  // Less attack vectors from outside for ordinary uses
-    , bytecoind_remote_port(0)
-    , bytecoind_remote_ip("127.0.0.1")
+    , bytecoinmobiled_bind_port(RPC_DEFAULT_PORT)
+    , bytecoinmobiled_bind_ip("127.0.0.1")  // Less attack vectors from outside for ordinary uses
+    , bytecoinmobiled_remote_port(0)
+    , bytecoinmobiled_remote_ip("127.0.0.1")
     , walletd_bind_port(WALLET_RPC_DEFAULT_PORT)
     , walletd_bind_ip("127.0.0.1")  // Connection to wallet allows spending
     , p2p_local_white_list_limit(P2P_LOCAL_WHITE_PEERLIST_LIMIT)
@@ -53,7 +53,7 @@ Config::Config(common::CommandLine &cmd)
 		network_id.data[0] += 1;
 		p2p_bind_port += 1000;
 		p2p_external_port += 1000;
-		bytecoind_bind_port += 1000;
+		bytecoinmobiled_bind_port += 1000;
 		p2p_allow_local_ip = true;
 	}
 	if (const char *pa = cmd.get("--p2p-bind-address")) {
@@ -80,33 +80,33 @@ Config::Config(common::CommandLine &cmd)
 		    "Setting --ssl_certificate_password impossible - this binary is built without OpenSSL");
 #endif
 	}
-	if (const char *pa = cmd.get("--bytecoind-authorization")) {
-		bytecoind_authorization = common::base64::encode(BinaryArray(pa, pa + strlen(pa)));
+	if (const char *pa = cmd.get("--bytecoinmobiled-authorization")) {
+		bytecoinmobiled_authorization = common::base64::encode(BinaryArray(pa, pa + strlen(pa)));
 	}
-	if (const char *pa = cmd.get("--bytecoind-bind-address")) {
-		if (!common::parse_ip_address_and_port(pa, bytecoind_bind_ip, bytecoind_bind_port))
+	if (const char *pa = cmd.get("--bytecoinmobiled-bind-address")) {
+		if (!common::parse_ip_address_and_port(pa, bytecoinmobiled_bind_ip, bytecoinmobiled_bind_port))
 			throw std::runtime_error("Wrong address format " + std::string(pa) + ", should be ip:port");
 	}
-	if (const char *pa = cmd.get("--bytecoind-remote-address")) {
+	if (const char *pa = cmd.get("--bytecoinmobiled-remote-address")) {
 		std::string addr         = pa;
 		const std::string prefix = "https://";
 		if (addr.find(prefix) == 0) {
 #if !platform_USE_SSL
 			throw std::runtime_error(
-			    "Using https in --bytecoind-remote-address impossible - this binary is built without OpenSSL");
+			    "Using https in --bytecoinmobiled-remote-address impossible - this binary is built without OpenSSL");
 #endif
 			std::string sip;
 			std::string sport;
 			if (!split_string(addr.substr(prefix.size()), ":", sip, sport))
 				throw std::runtime_error(
 				    "Wrong address format " + addr + ", should be <ip>:<port> or https://<host>:<port>");
-			bytecoind_remote_port = boost::lexical_cast<uint16_t>(sport);
-			bytecoind_remote_ip   = prefix + sip;
+			bytecoinmobiled_remote_port = boost::lexical_cast<uint16_t>(sport);
+			bytecoinmobiled_remote_ip   = prefix + sip;
 		} else {
 			const std::string prefix2 = "http://";
 			if (addr.find(prefix2) == 0)
 				addr = addr.substr(prefix2.size());
-			if (!common::parse_ip_address_and_port(addr, bytecoind_remote_ip, bytecoind_remote_port))
+			if (!common::parse_ip_address_and_port(addr, bytecoinmobiled_remote_ip, bytecoinmobiled_remote_port))
 				throw std::runtime_error("Wrong address format " + addr + ", should be ip:port");
 		}
 	}

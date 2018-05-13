@@ -21,7 +21,7 @@ namespace bytecoin {
 
 // a bit different commit periods to make most commits not simultaneous
 static const float DB_COMMIT_PERIOD_WALLET_CACHE = 290;  // 5 minutes sounds good compromise
-static const float DB_COMMIT_PERIOD_BYTECOIND    = 310;  // 5 minutes sounds good compromise
+static const float DB_COMMIT_PERIOD_BYTECOINMOBILED    = 310;  // 5 minutes sounds good compromise
 static const float SYNC_TIMEOUT                  = 20;   // If sync does not return, select different sync node after
 static const int DOWNLOAD_CONCURRENCY            = 4;
 static const int DOWNLOAD_QUEUE                  = 10;  // number of block requests sent before receiving reply
@@ -40,37 +40,37 @@ public:
 
 	// binary method
 	bool on_wallet_sync3(http::Client *, http::RequestData &&, json_rpc::Request &&,
-	    api::bytecoind::SyncBlocks::Request &&, api::bytecoind::SyncBlocks::Response &);
+	    api::bytecoinmobiled::SyncBlocks::Request &&, api::bytecoinmobiled::SyncBlocks::Response &);
 	bool on_sync_mempool3(http::Client *, http::RequestData &&, json_rpc::Request &&,
-	    api::bytecoind::SyncMemPool::Request &&, api::bytecoind::SyncMemPool::Response &);
+	    api::bytecoinmobiled::SyncMemPool::Request &&, api::bytecoinmobiled::SyncMemPool::Response &);
 
-	api::bytecoind::GetStatus::Response create_status_response3() const;
+	api::bytecoinmobiled::GetStatus::Response create_status_response3() const;
 	// json_rpc_node
 	bool on_get_status3(http::Client *, http::RequestData &&, json_rpc::Request &&,
-	    api::bytecoind::GetStatus::Request &&, api::bytecoind::GetStatus::Response &);
+	    api::bytecoinmobiled::GetStatus::Request &&, api::bytecoinmobiled::GetStatus::Response &);
 	bool on_get_random_outputs3(http::Client *, http::RequestData &&, json_rpc::Request &&,
-	    api::bytecoind::GetRandomOutputs::Request &&, api::bytecoind::GetRandomOutputs::Response &);
+	    api::bytecoinmobiled::GetRandomOutputs::Request &&, api::bytecoinmobiled::GetRandomOutputs::Response &);
 	bool handle_send_transaction3(http::Client *, http::RequestData &&, json_rpc::Request &&,
-	    api::bytecoind::SendTransaction::Request &&, api::bytecoind::SendTransaction::Response &);
+	    api::bytecoinmobiled::SendTransaction::Request &&, api::bytecoinmobiled::SendTransaction::Response &);
 	bool handle_check_send_proof3(http::Client *, http::RequestData &&, json_rpc::Request &&,
-	    api::bytecoind::CheckSendProof::Request &&, api::bytecoind::CheckSendProof::Response &);
+	    api::bytecoinmobiled::CheckSendProof::Request &&, api::bytecoinmobiled::CheckSendProof::Response &);
 	bool on_getblocktemplate(http::Client *, http::RequestData &&, json_rpc::Request &&,
-	    api::bytecoind::GetBlockTemplate::Request &&r, api::bytecoind::GetBlockTemplate::Response &);
+	    api::bytecoinmobiled::GetBlockTemplate::Request &&r, api::bytecoinmobiled::GetBlockTemplate::Response &);
 	void getblocktemplate(
-	    const api::bytecoind::GetBlockTemplate::Request &, api::bytecoind::GetBlockTemplate::Response &);
+	    const api::bytecoinmobiled::GetBlockTemplate::Request &, api::bytecoinmobiled::GetBlockTemplate::Response &);
 	bool on_get_currency_id(http::Client *, http::RequestData &&, json_rpc::Request &&,
-	    api::bytecoind::GetCurrencyId::Request &&, api::bytecoind::GetCurrencyId::Response &);
+	    api::bytecoinmobiled::GetCurrencyId::Request &&, api::bytecoinmobiled::GetCurrencyId::Response &);
 	bool on_submitblock(http::Client *, http::RequestData &&, json_rpc::Request &&,
-	    api::bytecoind::SubmitBlock::Request &&, api::bytecoind::SubmitBlock::Response &);
+	    api::bytecoinmobiled::SubmitBlock::Request &&, api::bytecoinmobiled::SubmitBlock::Response &);
 	bool on_submitblock_legacy(http::Client *, http::RequestData &&, json_rpc::Request &&,
-	    api::bytecoind::SubmitBlockLegacy::Request &&, api::bytecoind::SubmitBlockLegacy::Response &);
+	    api::bytecoinmobiled::SubmitBlockLegacy::Request &&, api::bytecoinmobiled::SubmitBlockLegacy::Response &);
 	bool on_get_last_block_header(http::Client *, http::RequestData &&, json_rpc::Request &&,
-	    api::bytecoind::GetLastBlockHeaderLegacy::Request &&, api::bytecoind::GetLastBlockHeaderLegacy::Response &);
+	    api::bytecoinmobiled::GetLastBlockHeaderLegacy::Request &&, api::bytecoinmobiled::GetLastBlockHeaderLegacy::Response &);
 	bool on_get_block_header_by_hash(http::Client *, http::RequestData &&, json_rpc::Request &&,
-	    api::bytecoind::GetBlockHeaderByHashLegacy::Request &&, api::bytecoind::GetBlockHeaderByHashLegacy::Response &);
+	    api::bytecoinmobiled::GetBlockHeaderByHashLegacy::Request &&, api::bytecoinmobiled::GetBlockHeaderByHashLegacy::Response &);
 	bool on_get_block_header_by_height(http::Client *, http::RequestData &&, json_rpc::Request &&,
-	    api::bytecoind::GetBlockHeaderByHeightLegacy::Request &&,
-	    api::bytecoind::GetBlockHeaderByHeightLegacy::Response &);
+	    api::bytecoinmobiled::GetBlockHeaderByHeightLegacy::Request &&,
+	    api::bytecoinmobiled::GetBlockHeaderByHeightLegacy::Response &);
 
 	bool process_json_rpc_request(http::Client *, http::RequestData &&, http::ResponseData &);
 
@@ -87,7 +87,7 @@ protected:
 		http::Client *original_who = nullptr;
 		http::RequestData original_request;
 		json_rpc::Request original_json_request;
-		api::bytecoind::GetStatus::Request original_get_status;
+		api::bytecoinmobiled::GetStatus::Request original_get_status;
 	};
 	std::list<LongPollClient> m_long_poll_http_clients;
 	void advance_long_poll();
@@ -100,7 +100,7 @@ protected:
 	std::unique_ptr<platform::PreventSleep> prevent_sleep;
 	void db_commit() {
 		m_block_chain.db_commit();
-		m_commit_timer.once(DB_COMMIT_PERIOD_BYTECOIND);
+		m_commit_timer.once(DB_COMMIT_PERIOD_BYTECOINMOBILED);
 	}
 
 	bool check_trust(const proof_of_trust &);
